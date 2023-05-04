@@ -28,5 +28,5 @@ app.use(saveSessionToLocal);
 app.use("/", rootRouter);
 
 app.listen(PORT, () => {
-  console.log(`✅ Server listenting on http://localhost:${PORT} 🚀`);
+  console.log(`✅ Server listenting on port ${PORT} 🚀`);
 });
