@@ -1,0 +1,19 @@
+{
+    "env": {
+        "browser": false,
+        "node": true
+    },
+    "extends": ["plugin:prettier/recommended"],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-unused-vars": "warn",
+        "no-console": "off",
+        "func-names": "off",
+        "no-plusplus": "off",
+        "no-process-exit": "off",
+        "class-methods-use-this": "off"
+    }
+}

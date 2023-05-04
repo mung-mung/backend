@@ -1,0 +1,54 @@
+{
+  "name": "mungmung",
+  "version": "1.0.0",
+  "description": "**설명 :** 강아지 산책 매칭 서비스 mung mung 백엔드 레포지토리입니다.",
+  "main": "src/index.js",
+  "scripts": {
+    "start:dev": "nodemon --exec babel-node src/index.js",
+    "lint:check": "eslint --ext .js .",
+    "lint:fix": "eslint --fix --ext .js .",
+    "format:check": "prettier --check \"./**/*.js\" --ignore-unknown",
+    "format:fix": "prettier \"./**/*.js\" --write --ignore-unknown"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mung-mung/backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mung-mung/backend/issues"
+  },
+  "homepage": "https://github.com/mung-mung/backend#readme",
+  "dependencies": {
+    "@ffmpeg/core": "^0.8.5",
+    "@ffmpeg/ffmpeg": "^0.9.7",
+    "bcrypt": "^5.0.1",
+    "connect-mongo": "^4.4.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.1",
+    "mongoose": ">=6.4.6",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.6.7",
+    "pug": "^3.0.2",
+    "regenerator-runtime": "^0.13.7",
+    "jsonwebtoken": "^9.0.0",
+    "pm2": "^5.2.2",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "babel-loader": "^8.2.2",
+    "nodemon": "^2.0.7",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "2.7.1"
+  }
+}
