@@ -60,3 +60,9 @@ export const postLogin = async (req, res) => {
   loginUserToSession(req, user);
   return httpResponse.SUCCESS_OK(res, "로그인 성공", user);
 };
+
+export const getLogout = (req, res) => {
+  const loggedInUser = req.session.loggedInUser;
+  req.session.destroy();
+  return httpResponse.SUCCESS_OK(res, "로그아웃 성공", loggedInUser);
+};
