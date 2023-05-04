@@ -1,3 +1,5 @@
+const {httpResponse} = require("../configs/http-response");
+
 export const onlyisLoggedIn = (req, res, next) => {
   if (req.session.isLoggedIn) {
     return next();
