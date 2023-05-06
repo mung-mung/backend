@@ -5,10 +5,19 @@ const userSchema = new mongoose.Schema({
   userType: {type: String, required: true},
   email: {type: String, required: true, unique: true},
   id: {type: String, required: true, unique: true},
-  pw: {type: String},
-  location: {type: String, required: true},
-  ownerDogArray: [{type: mongoose.Schema.Types.ObjectId, ref: "Dog"}],
-  walkerIntro: {type: String},
+  pw: {type: String, required: true},
+  avataUrl: {
+    type: String,
+    default:
+      "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png",
+  },
+  contact: {type: Number, required: true},
+  sex: {
+    type: String,
+    enum: ["male", "female", "prefer not to disclose"],
+    required: true,
+  },
+  birthYear: {type: Number, required: true},
 });
 
 userSchema.pre("save", async function () {
