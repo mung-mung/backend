@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "mungmung-server",
       script: "npm",
-      args: "run babel-node src/index.js",
+      args: "run start:dev",
       instances: 0,
       exec_mode: "cluster",
       wait_ready: true,
