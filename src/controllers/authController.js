@@ -8,7 +8,8 @@ const loginUserToSession = (req, user) => {
 };
 
 export const postSignup = async (req, res) => {
-  const {userType, email, id, pw, confirmPw, location} = req.body;
+  const {userType, email, id, pw, confirmPw, contact, sex, birthYear} =
+    req.body;
   if (pw !== confirmPw) {
     return httpResponse.BAD_REQUEST(
       res,
@@ -30,7 +31,9 @@ export const postSignup = async (req, res) => {
       email,
       id,
       pw,
-      location,
+      contact,
+      sex,
+      birthYear,
     });
     loginUserToSession(req, user);
     return httpResponse.SUCCESS_OK(res, "회원가입 성공", user);
