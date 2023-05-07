@@ -20,11 +20,18 @@ const userSchema = new mongoose.Schema({
   birthYear: {type: Number, required: true},
 });
 
-userSchema.pre("save", async function () {
-  if (this.isModified("pw")) {
-    this.pw = await bcrypt.hash(this.pw, 5);
-  }
-});
+userSchema.pre(
+  "save",
+  async function () {
+    if (this.isModified("pw")) {
+      this.pw = await bcrypt.hash(this.pw, 5);
+    }
+  },
+  {
+    versionKey: false,
+    timestamps: true,
+  },
+);
 
 const User = mongoose.model("User", userSchema);
 export default User;
