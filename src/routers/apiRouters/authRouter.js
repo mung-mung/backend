@@ -11,8 +11,6 @@ import {
 
 const authRouter = express.Router();
 
-authRouter.route("/").get((req, res) => res.send("Auth"));
-
 authRouter.route("/signup").all(onlyisLoggedOut).post(postSignup);
 authRouter.route("/login").all(onlyisLoggedOut).post(postLogin);
 authRouter.route("/logout").all(onlyisLoggedIn).get(getLogout);
