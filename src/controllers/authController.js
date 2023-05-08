@@ -1,4 +1,6 @@
 import User from "../models/User";
+import Owner from "../models/Owner";
+import Walker from "../models/Walker";
 import bcrypt from "bcrypt";
 const {httpResponse} = require("../configs/httpResponse");
 
@@ -36,7 +38,16 @@ export const postSignup = async (req, res) => {
       birthYear,
     });
     loginUserToSession(req, user);
-    return httpResponse.SUCCESS_OK(res, "회원가입 성공", user);
+    if (userType === "owner") {
+      const owner = await Owner.create({userId: user._id});
+      return httpResponse.SUCCESS_OK(res, "owner 회원가입 성공", {user, owner});
+    } else {
+      const walker = await Walker.create({userId: user._id});
+      return httpResponse.SUCCESS_OK(res, "walker 회원가입 성공", {
+        user,
+        walker,
+      });
+    }
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
