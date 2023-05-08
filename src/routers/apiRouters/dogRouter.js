@@ -12,8 +12,7 @@ import express from "express";
 const dogRouter = express.Router();
 
 dogRouter.use(onlyisLoggedIn);
-dogRouter.route("/").get(getAllDogs);
-dogRouter.route("/add").post(postOneDog);
+dogRouter.route("/").get(getAllDogs).post(postOneDog);
 dogRouter
   .route("/:dogId")
   .get(getOneDog)
