@@ -1,5 +1,5 @@
 import User from "../models/User";
-const {httpResponse} = require("../configs/http-response");
+const {httpResponse} = require("../configs/httpResponse");
 
 export const getLoggedInUser = (req, res) => {
   const loggedInUser = req.session.loggedInUser;

@@ -1,6 +1,6 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
-const {httpResponse} = require("../configs/http-response");
+const {httpResponse} = require("../configs/httpResponse");
 
 const loginUserToSession = (req, user) => {
   req.session.isLoggedIn = true;

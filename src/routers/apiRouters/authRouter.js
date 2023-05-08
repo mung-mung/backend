@@ -1,6 +1,13 @@
 import express from "express";
-import {postSignup, postLogin, getLogout} from "../controllers/authController";
-import {onlyisLoggedIn, onlyisLoggedOut} from "../middlewares/authMiddleware";
+import {
+  postSignup,
+  postLogin,
+  getLogout,
+} from "../../controllers/authController";
+import {
+  onlyisLoggedIn,
+  onlyisLoggedOut,
+} from "../../middlewares/authMiddleware";
 
 const authRouter = express.Router();
 
