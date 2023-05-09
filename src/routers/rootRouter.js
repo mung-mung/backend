@@ -1,6 +1,6 @@
 import authRouter from "./apiRouters/authRouter";
 import userRouter from "./apiRouters/userRouter";
-import dogRouter from "./apiRouters/userRouter";
+import dogRouter from "./apiRouters/dogRouter";
 import matchRouter from "./apiRouters/matchRouter";
 
 import express from "express";
