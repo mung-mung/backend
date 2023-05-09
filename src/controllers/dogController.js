@@ -57,7 +57,32 @@ export const getOneDog = async (req, res) => {
   }
 };
 
-export const getOneDog = async (req, res) => {};
+export const patchOneDog = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
+  try {
+    const {dogId} = req.params;
+    const {dogName, birthYearMonth, breed, weight} = req.body;
+    const newDog = await Dog.findByIdAndUpdate(
+      dogId,
+      {
+        dogName,
+        birthYearMonth,
+        breed,
+        weight,
+      },
+      {new: true},
+    );
+    return httpResponse.SUCCESS_OK(res, "", newDog);
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
 
 export const patchOneDog = async (req, res) => {};
 
