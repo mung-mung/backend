@@ -1,6 +1,17 @@
+import Dog from "../models/Dog";
+import Owner from "../models/Owner";
+
 const {httpResponse} = require("../configs/httpResponse");
 
-export const getAllDogs = async (req, res) => {};
+export const getAllDogs = async (req, res) => {
+  try {
+    const dogs = await Dog.find({});
+    return httpResponse.SUCCESS_OK(res, "", dogs);
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
+
 export const postOneDog = async (req, res) => {
   if (req.session.loggedInUser === undefined) {
     return httpResponse.BAD_REQUEST(
