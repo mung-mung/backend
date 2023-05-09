@@ -7,6 +7,15 @@ const ownerSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    greeting: {
+      type: String,
+      default: "",
+    },
+    availableTime: {
+      type: [[[String]]],
+      default: [[[]]],
+      required: true,
+    },
     dogArray: {
       type: [{type: mongoose.Schema.Types.ObjectId, ref: "Dog"}],
       required: true,

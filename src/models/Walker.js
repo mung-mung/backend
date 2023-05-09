@@ -7,16 +7,20 @@ const walkerSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    intro: {
-      type: Object,
-      default: {
-        greeting: {type: String, default: ""},
-        appeal: {type: String, default: ""},
-        availableTime: {type: String, default: ""},
-      },
+    greeting: {
+      type: String,
+      default: "",
+    },
+    availableTime: {
+      type: [[[String]]],
+      default: [[[]]],
       required: true,
     },
-    location: {type: [String], required: true, default: []},
+    appeal: {
+      type: String,
+      default: "",
+    },
+    location: {type: [String], default: [], required: true},
   },
   {
     versionKey: false,
