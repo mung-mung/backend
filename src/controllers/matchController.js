@@ -51,3 +51,21 @@ export const postOneMatch = async (req, res) => {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
 };
+export const getOneMatch = async (req, res) => {
+  const {matchId} = req.params;
+  try {
+    const match = await Match.findById(matchId);
+    return httpResponse.SUCCESS_OK(res, "", match);
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
+export const deleteOneMatch = async (req, res) => {
+  try {
+    const {matchId} = req.params;
+    const deletedMatch = await Match.findByIdAndDelete(matchId);
+    return httpResponse.SUCCESS_OK(res, "match 삭제 성공", deletedMatch);
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
