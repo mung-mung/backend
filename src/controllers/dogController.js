@@ -22,7 +22,17 @@ export const postOneDog = async (req, res) => {
   }
   try {
     const {dogName, birthYearMonth, breed, weight} = req.body;
-    const userId = req.session.loggedInUser._id;
+    const loggedInUser = req.session.loggedInUser;
+    const userId = loggedInUser._id;
+    const userType = loggedInUser.userType;
+    if (userType !== "owner") {
+      return httpResponse.BAD_REQUEST(
+        res,
+        "owner로 로그인 된 경우에만 강아지를 등록할 수 있습니다.",
+        error,
+      );
+    }
+
     const loggedInOwner = await Owner.findOne({userId});
     const ownerId = loggedInOwner._id;
     const newDog = await Dog.create({
