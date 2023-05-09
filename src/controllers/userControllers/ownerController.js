@@ -13,11 +13,18 @@ export const getLoggedInOwner = async (req, res) => {
   }
 };
 export const patchLoggedInOwner = async (req, res) => {
-  const userId = req.session.loggedInUser._id;
-  const {greeting, availableTime, location} = req.body;
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
-    const loggedInUser = await Owner.findOne({userId});
-    const ownerId = loggedInUser._id;
+    const {greeting, availableTime, location} = req.body;
+    const userId = req.session.loggedInUser._id;
+    const loggedInOwner = await Owner.findOne({userId});
+    const ownerId = loggedInOwner._id;
     const newOwner = await Owner.findByIdAndUpdate(
       ownerId,
       {

@@ -4,8 +4,15 @@ import Walker from "../../models/Walker";
 const {httpResponse} = require("../../configs/httpResponse");
 
 export const getLoggedInWalker = async (req, res) => {
-  const {_id} = req.session.loggedInUser;
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
+    const {_id} = req.session.loggedInUser;
     const loggedInWalker = await Walker.find({userId: _id});
     return httpResponse.SUCCESS_OK(res, "", loggedInWalker);
   } catch (error) {
@@ -13,9 +20,16 @@ export const getLoggedInWalker = async (req, res) => {
   }
 };
 export const patchLoggedInWalker = async (req, res) => {
-  const userId = req.session.loggedInUser._id;
-  const {greeting, availableTime, appeal, location} = req.body;
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
+    const {greeting, availableTime, appeal, location} = req.body;
+    const userId = req.session.loggedInUser._id;
     const loggedInWalker = await Walker.findOne({userId});
     const walkerId = loggedInWalker._id;
     const newWalker = await Walker.findByIdAndUpdate(
