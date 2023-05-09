@@ -33,7 +33,25 @@ export const postOneDog = async (req, res) => {
       breed,
       weight,
     });
-    return httpResponse.SUCCESS_OK(res, "강아지 추가 성공", newDog);
+    const newDogId = newDog._id;
+    const dogArray = loggedInOwner.dogArray;
+    dogArray.push(newDogId);
+    const newOwner = await Owner.findByIdAndUpdate(
+      ownerId,
+      {dogArray},
+      {new: true},
+    );
+    return httpResponse.SUCCESS_OK(res, "강아지 추가 성공", {newDog, newOwner});
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
+
+export const getOneDog = async (req, res) => {
+  try {
+    const {dogId} = req.params;
+    const dog = await Dog.findById(dogId);
+    return httpResponse.SUCCESS_OK(res, "", dog);
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
