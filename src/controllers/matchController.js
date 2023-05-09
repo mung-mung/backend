@@ -33,3 +33,21 @@ export const getAllMatches = async (req, res) => {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
 };
+export const postOneMatch = async (req, res) => {
+  try {
+    const {ownerId, walkerId, dogId} = req.body;
+    const owner = await Owner.findById(ownerId);
+    const ownerDogArray = owner.dogArray;
+    if (!ownerDogArray.includes(dogId)) {
+      return httpResponse.BAD_REQUEST(
+        res,
+        "등록하려는 강아지가 owner의 강아지가 아닙니다.",
+        error,
+      );
+    }
+    const match = await Match.create({ownerId, walkerId, dogId});
+    return httpResponse.SUCCESS_OK(res, "match 등록 성공", match);
+  } catch (error) {
+    return httpResponse.BAD_REQUEST(res, "", error);
+  }
+};
