@@ -17,6 +17,8 @@ const matchSchema = new mongoose.Schema(
       ref: "Dog",
       required: true,
     },
+    ownerOk: {type: Boolean, default: false},
+    walkerOk: {type: Boolean, default: false},
   },
   {
     versionKey: false,
