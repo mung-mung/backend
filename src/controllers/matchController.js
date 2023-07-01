@@ -2,33 +2,26 @@ import Match from "../models/Match";
 import Owner from "../models/Owner";
 import Walker from "../models/Walker";
 
+import {userId_owner, userId_walker} from "./functions";
+
 const {httpResponse} = require("../configs/httpResponse");
 
 export const getAllMatches = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
-    const loggedInUser = req.session.loggedInUser;
     const loggedInUserType = loggedInUser.userType;
-    const userId = loggedInUser._id;
     if (loggedInUserType === "owner") {
-      const loggedInOwner = await Owner.findOne({userId});
-      const ownerId = loggedInOwner._id;
-      const matches = await Match.find({ownerId});
+      const {loggedInOwner} = userId_owner(req);
+      const loggedInOwnerId = loggedInOwner._id;
+      const matches = await Match.find({loggedInOwnerId});
       return httpResponse.SUCCESS_OK(
         res,
         "현재 로그인 되어있는 owner에 대한 모든 match들 입니다.",
         matches,
       );
     } else if (loggedInUserType === "walker") {
-      const loggedInWalker = await Walker.findOne({userId});
-      const walkerId = loggedInWalker._id;
-      const matches = await Match.find({walkerId});
+      const {loggedInWalker} = userId_walker(req);
+      const loggedInWalkerId = loggedInWalker._id;
+      const matches = await Match.find({loggedInWalkerId});
       return httpResponse.SUCCESS_OK(
         res,
         "현재 로그인 되어있는 walker에 대한 모든 match들 입니다.",
@@ -40,13 +33,6 @@ export const getAllMatches = async (req, res) => {
   }
 };
 export const postOneMatch = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const {ownerId, walkerId, dogId} = req.body;
     const owner = await Owner.findById(ownerId);
@@ -67,13 +53,6 @@ export const postOneMatch = async (req, res) => {
   }
 };
 export const getOneMatch = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   const {matchId} = req.params;
   try {
     const match = await Match.findById(matchId);
@@ -83,13 +62,6 @@ export const getOneMatch = async (req, res) => {
   }
 };
 export const deleteOneMatch = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const {matchId} = req.params;
     await Match.findByIdAndDelete(matchId);

@@ -1,15 +1,9 @@
 import Walker from "../../models/Walker";
+import {userId_walker} from "../functions";
 
 const {httpResponse} = require("../../configs/httpResponse");
 
 export const getAllWalkers = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const allWalkers = await Walker.find();
     return httpResponse.SUCCESS_OK(res, "", allWalkers);
@@ -18,20 +12,21 @@ export const getAllWalkers = async (req, res) => {
   }
 };
 export const patchLoggedInWalker = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const {greeting, availableTime, appeal, location} = req.body;
-    const userId = req.session.loggedInUser._id;
-    const loggedInWalker = await Walker.findOne({userId});
-    const walkerId = loggedInWalker._id;
+
+    const userType = req.session.loggedInUser.userType;
+    if (userType !== "walker") {
+      return httpResponse.BAD_REQUEST(
+        res,
+        "walker 계정으로만 접속할 수 있는 api 입니다.",
+        "",
+      );
+    }
+    const {loggedInUserId, loggedInWalker} = userId_walker(req);
+    const loggedInWalkerId = loggedInWalker._id;
     await Walker.findByIdAndUpdate(
-      walkerId,
+      loggedInWalkerId,
       {
         greeting,
         availableTime,
@@ -41,8 +36,8 @@ export const patchLoggedInWalker = async (req, res) => {
       {new: true},
     );
     return httpResponse.SUCCESS_OK(res, "walker 정보 수정 성공", {
-      userId,
-      walkerId,
+      userId: loggedInUserId,
+      walkerId: loggedInWalkerId,
     });
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);

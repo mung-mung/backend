@@ -1,16 +1,10 @@
 import Dog from "../models/Dog";
 import Owner from "../models/Owner";
+import {userId_owner} from "./functions";
 
 const {httpResponse} = require("../configs/httpResponse");
 
 export const getAllDogs = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const dogs = await Dog.find({});
     return httpResponse.SUCCESS_OK(res, "", dogs);
@@ -20,18 +14,10 @@ export const getAllDogs = async (req, res) => {
 };
 
 export const postOneDog = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const {dogName, birthYearMonth, breed, weight} = req.body;
-    const loggedInUser = req.session.loggedInUser;
-    const userId = loggedInUser._id;
-    const userType = loggedInUser.userType;
+
+    const userType = req.session.loggedInUser.userType;
     if (userType !== "owner") {
       return httpResponse.BAD_REQUEST(
         res,
@@ -40,10 +26,11 @@ export const postOneDog = async (req, res) => {
       );
     }
 
-    const loggedInOwner = await Owner.findOne({userId});
-    const ownerId = loggedInOwner._id;
+    const {loggedInOwner} = userId_owner(req);
+    const loggedInOwnerId = loggedInOwner._id;
+
     const newDog = await Dog.create({
-      ownerId,
+      loggedInOwnerId,
       dogName,
       birthYearMonth,
       breed,
@@ -52,10 +39,10 @@ export const postOneDog = async (req, res) => {
     const newDogId = newDog._id;
     const dogArray = loggedInOwner.dogArray;
     dogArray.push(newDogId);
-    await Owner.findByIdAndUpdate(ownerId, {dogArray}, {new: true});
+    await Owner.findByIdAndUpdate(loggedInOwnerId, {dogArray}, {new: true});
     return httpResponse.SUCCESS_OK(res, "강아지 추가 성공", {
       dogId: newDogId,
-      ownerId: ownerId,
+      ownerId: loggedInOwnerId,
     });
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
@@ -80,18 +67,17 @@ export const getOneDog = async (req, res) => {
 };
 
 export const patchOneDog = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
-    const userId = req.session.loggedInUser._id;
-    const loggedInOwner = await Owner.findOne({userId});
+    const userType = req.session.loggedInUser.userType;
+    if (userType === "owner") {
+      return httpResponse.BAD_REQUEST(
+        res,
+        "강아지 수정 실패: owner 계정으로 로그인 된 경우에만 강아지를 수정할 수 있습니다.",
+        "",
+      );
+    }
+    const {loggedInOwner} = userId_owner(req);
     const loggedInOwnerId = loggedInOwner._id;
-
     const {dogId} = req.params;
     const dog = await Dog.findById(dogId);
 
@@ -123,18 +109,19 @@ export const patchOneDog = async (req, res) => {
 };
 
 export const deleteOneDog = async (req, res) => {
-  if (req.session.loggedInUser === undefined) {
-    return httpResponse.BAD_REQUEST(
-      res,
-      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
-      "",
-    );
-  }
   try {
     const {dogId} = req.params;
     const dog = findById(dogId);
-    const userId = req.session.loggedInUser._id;
-    const loggedInOwner = await Owner.findOne({userId});
+
+    const userType = req.session.loggedInUser.userType;
+    if (userType !== "owner") {
+      return httpResponse.BAD_REQUEST(
+        res,
+        "강아지 삭제 실패: owner 계정으로 로그인 된 경우에만 강아지를 삭제할 수 있습니다.",
+        "",
+      );
+    }
+    const {loggedInOwner} = userId_owner(req);
     const loggedInOwnerId = loggedInOwner._id;
     const dogArray = loggedInOwner.dogArray;
 
@@ -161,7 +148,7 @@ export const deleteOneDog = async (req, res) => {
         return httpResponse.SUCCESS_OK(
           res,
           "알 수 없는 오류로 DB에만 등록되어 있고 Owner에는 등록되어있지 않았던 강아지임. DB에서만 강아지를 삭제함.",
-          {dogId: dogId, ownerId: ownerId},
+          {dogId, ownerId: loggedInOwnerId},
         );
       }
     } else if (!isDogInDb && isDogIdInDogArray) {
@@ -170,7 +157,7 @@ export const deleteOneDog = async (req, res) => {
       return httpResponse.SUCCESS_OK(
         res,
         "알 수 없는 오류로 Owner에만 등록되어 있고 DB에는 등록되어 있지 않았던 강아지임. Owner에서만 강아지를 삭제함.",
-        {dogId: dogId, ownerId: ownerId},
+        {dogId, ownerId: loggedInOwnerId},
       );
     } else if (isDogInDb && isDogIdInDogArray) {
       const isLoggedInUserOwnerOfDog = dog.ownerId === loggedInOwnerId;
