@@ -1,13 +1,17 @@
 const {httpResponse} = require("../../configs/httpResponse");
 import Owner from "../../models/Owner";
 
-export const getLoggedInOwner = async (req, res) => {
-  const {_id} = req.session.loggedInUser;
+export const getAllOwners = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
-    const loggedInOwner = await Owner.find({userId: _id});
-    return httpResponse.SUCCESS_OK(res, "", {
-      loggedInOwner,
-    });
+    const allOwners = await Owner.find();
+    return httpResponse.SUCCESS_OK(res, "", allOwners);
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }

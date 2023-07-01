@@ -3,7 +3,7 @@ import Walker from "../../models/Walker";
 
 const {httpResponse} = require("../../configs/httpResponse");
 
-export const getLoggedInWalker = async (req, res) => {
+export const getAllWalkers = async (req, res) => {
   if (req.session.loggedInUser === undefined) {
     return httpResponse.BAD_REQUEST(
       res,
@@ -12,9 +12,8 @@ export const getLoggedInWalker = async (req, res) => {
     );
   }
   try {
-    const {_id} = req.session.loggedInUser;
-    const loggedInWalker = await Walker.find({userId: _id});
-    return httpResponse.SUCCESS_OK(res, "", loggedInWalker);
+    const allWalkers = await Walker.find();
+    return httpResponse.SUCCESS_OK(res, "", allWalkers);
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
