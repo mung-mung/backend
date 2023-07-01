@@ -1,6 +1,5 @@
 import Match from "../models/Match";
 import Owner from "../models/Owner";
-import Walker from "../models/Walker";
 
 import {userId_owner, userId_walker} from "./functions";
 
