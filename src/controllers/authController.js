@@ -37,15 +37,21 @@ export const postSignup = async (req, res) => {
       sex,
       birthYear,
     });
+    const userId = user._id;
     loginUserToSession(req, user);
     if (userType === "owner") {
       const owner = await Owner.create({userId: user._id});
-      return httpResponse.SUCCESS_OK(res, "owner 회원가입 성공", {user, owner});
+      const ownerId = owner._id;
+      return httpResponse.SUCCESS_OK(res, "owner 회원가입 성공", {
+        userId,
+        ownerId,
+      });
     } else {
       const walker = await Walker.create({userId: user._id});
+      const walkerId = walker._id;
       return httpResponse.SUCCESS_OK(res, "walker 회원가입 성공", {
-        user,
-        walker,
+        userId,
+        walkerId,
       });
     }
   } catch (error) {
@@ -72,11 +78,14 @@ export const postLogin = async (req, res) => {
     );
   }
   loginUserToSession(req, user);
-  return httpResponse.SUCCESS_OK(res, "로그인 성공", user);
+  const userId = user._id;
+  return httpResponse.SUCCESS_OK(res, "로그인 성공", {userId});
 };
 
 export const getLogout = (req, res) => {
-  const loggedInUser = req.session.loggedInUser;
+  const userId = req.session.loggedInUser._id;
   req.session.destroy();
-  return httpResponse.SUCCESS_OK(res, "로그아웃 성공", loggedInUser);
+  return httpResponse.SUCCESS_OK(res, "로그아웃 성공", {
+    userId,
+  });
 };

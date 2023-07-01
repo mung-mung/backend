@@ -1,11 +1,17 @@
 import Match from "../models/Match";
-import User from "../models/User";
 import Owner from "../models/Owner";
 import Walker from "../models/Walker";
 
 const {httpResponse} = require("../configs/httpResponse");
 
 export const getAllMatches = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
     const loggedInUser = req.session.loggedInUser;
     const loggedInUserType = loggedInUser.userType;
@@ -34,6 +40,13 @@ export const getAllMatches = async (req, res) => {
   }
 };
 export const postOneMatch = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
     const {ownerId, walkerId, dogId} = req.body;
     const owner = await Owner.findById(ownerId);
@@ -46,12 +59,21 @@ export const postOneMatch = async (req, res) => {
       );
     }
     const match = await Match.create({ownerId, walkerId, dogId});
-    return httpResponse.SUCCESS_OK(res, "match 등록 성공", match);
+    return httpResponse.SUCCESS_OK(res, "match 등록 성공", {
+      matchId: match._id,
+    });
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
 };
 export const getOneMatch = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   const {matchId} = req.params;
   try {
     const match = await Match.findById(matchId);
@@ -61,10 +83,17 @@ export const getOneMatch = async (req, res) => {
   }
 };
 export const deleteOneMatch = async (req, res) => {
+  if (req.session.loggedInUser === undefined) {
+    return httpResponse.BAD_REQUEST(
+      res,
+      "로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.",
+      "",
+    );
+  }
   try {
     const {matchId} = req.params;
-    const deletedMatch = await Match.findByIdAndDelete(matchId);
-    return httpResponse.SUCCESS_OK(res, "match 삭제 성공", deletedMatch);
+    await Match.findByIdAndDelete(matchId);
+    return httpResponse.SUCCESS_OK(res, "match 삭제 성공", {matchId});
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }

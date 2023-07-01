@@ -1,4 +1,3 @@
-import User from "../../models/User";
 import Walker from "../../models/Walker";
 
 const {httpResponse} = require("../../configs/httpResponse");
@@ -31,7 +30,7 @@ export const patchLoggedInWalker = async (req, res) => {
     const userId = req.session.loggedInUser._id;
     const loggedInWalker = await Walker.findOne({userId});
     const walkerId = loggedInWalker._id;
-    const newWalker = await Walker.findByIdAndUpdate(
+    await Walker.findByIdAndUpdate(
       walkerId,
       {
         greeting,
@@ -41,7 +40,10 @@ export const patchLoggedInWalker = async (req, res) => {
       },
       {new: true},
     );
-    return httpResponse.SUCCESS_OK(res, "", newWalker);
+    return httpResponse.SUCCESS_OK(res, "walker 정보 수정 성공", {
+      userId,
+      walkerId,
+    });
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }

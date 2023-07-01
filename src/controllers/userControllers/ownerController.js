@@ -1,5 +1,6 @@
-const {httpResponse} = require("../../configs/httpResponse");
 import Owner from "../../models/Owner";
+
+const {httpResponse} = require("../../configs/httpResponse");
 
 export const getAllOwners = async (req, res) => {
   if (req.session.loggedInUser === undefined) {
@@ -29,7 +30,7 @@ export const patchLoggedInOwner = async (req, res) => {
     const userId = req.session.loggedInUser._id;
     const loggedInOwner = await Owner.findOne({userId});
     const ownerId = loggedInOwner._id;
-    const newOwner = await Owner.findByIdAndUpdate(
+    await Owner.findByIdAndUpdate(
       ownerId,
       {
         greeting,
@@ -38,7 +39,10 @@ export const patchLoggedInOwner = async (req, res) => {
       },
       {new: true},
     );
-    return httpResponse.SUCCESS_OK(res, "", newOwner);
+    return httpResponse.SUCCESS_OK(res, "owner 정보 수정 성공", {
+      userId,
+      ownerId,
+    });
   } catch (error) {
     return httpResponse.BAD_REQUEST(res, "", error);
   }
